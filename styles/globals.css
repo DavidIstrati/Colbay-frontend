@@ -24,8 +24,3 @@ a {
   background-image: url("../public/BackgroundStars.svg");
   background-repeat: repeat;
 }
-
-.background-stars-opacity-50{
-  background-image: url("../public/BackgroundStarsOpacity50.svg");
-  background-repeat: repeat;
-}

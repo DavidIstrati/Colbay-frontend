@@ -12,7 +12,7 @@ const getLikes = (userId: string) => {
 
 interface Like {
     userId: string
-    postId: string
+    listingId: string
 }
 
 const postLike = (body: Like) => {

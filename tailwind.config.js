@@ -12,11 +12,8 @@ module.exports = {
       fontFamily: {
         spaceGrotesk: ['Space Grotesk', 'sans-serif'],
       },
-      boxShadow: {
-        'solid-2': '-2px 2px 0px #333',
-        'solid-4': '-4px 4px 0px #333',
-        'solid-6': '-6px 6px 0px #333',
-        'solid-10': '-10px 10px 0px #333',
+      backgroundImage: {
+        gradient: "linear-gradient(70.38deg, #ECB85B 0%, #FF4C00 22.79%, #B57CFF 70.6%, #3DD2DD 97.59%);"
       }
     },
   },

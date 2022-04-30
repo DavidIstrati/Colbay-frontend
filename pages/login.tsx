@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { TextInput, EmailInput } from "../components";
 import { getUser } from "../api";
 
-import { useAuth } from "../storage";
+import { useAuth } from "../helpers";
 
 import { useRouter } from "next/router";
 
@@ -11,7 +11,6 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 
 import AOS from "aos";
-import "aos/dist/aos.css";
 
 const Login: NextPage = () => {
   useEffect(() => {
@@ -22,9 +21,9 @@ const Login: NextPage = () => {
 
   const router = useRouter();
 
-    if (user) {
-      router.push("/search");
-    }
+  if (user) {
+    router.push("/search");
+  }
 
   interface FormInputs {
     email: string;

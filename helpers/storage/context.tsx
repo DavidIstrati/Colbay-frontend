@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 
-type userProps = {
+export type userProps = {
     firstName: string;
     lastName: string;
     email: string;

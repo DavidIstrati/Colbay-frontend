@@ -3,46 +3,38 @@ import Link from "next/link";
 
 export default function Navbar({ active }: { active: string }): JSX.Element {
   return (
-    <div className="w-screen h-20 bg-white py-4 px-40 border-b-2 border-gray-900 flex flex-row">
+    <div className="w-screen h-20 bg-white py-4 lg:px-10 xl:px-20 2xl:px-60 shadow-md flex flex-row">
       <img src="/LogoText.svg" className="h-full" />
       <div className="flex flex-row h-full ml-20">
-        <Link href="/search">
-          <div
-            className={`rounded-sm border hover:bg-black hover:text-white shadow-solid-2 text-md flex justify-center items-center px-4 py-1 cursor-pointer ${
-              active == "home"
-                ? "bg-black text-white border-white"
-                : "bg-white text-gray-900 border-gray-900"
-            } `}
-          >
-            <AiOutlineHome />
-            <span className="ml-2">Home</span>
-          </div>
-        </Link>
-        <Link href="/likes">
-          <div
-            className={`rounded-sm border  hover:bg-black hover:text-white shadow-solid-2 text-md flex justify-center items-center px-4 py-1 ml-5 cursor-pointer ${
-              active == "likes"
-                ? "bg-black text-white"
-                : "bg-white text-gray-900 border-gray-900"
-            } `}
-          >
-            <AiOutlineHeart />
-            <span className="ml-2">Likes</span>
-          </div>
-        </Link>
-        <Link href="/listings">
-          <div
-            className={`rounded-sm border hover:bg-black hover:text-white shadow-solid-2 text-md flex justify-center items-center px-4 py-1 ml-5 cursor-pointer ${
-              active == "listings"
-                ? "bg-black text-white"
-                : "bg-white text-gray-900 border-gray-900 "
-            }`}
-          >
-            <AiOutlineTag />
-            <span className="ml-2 font-spaceGrotesk">Listings</span>
-          </div>
-        </Link>
+          <NavTab icon={<AiOutlineHome />} text={"Home"} active={active} link="/search" />
+          <NavTab icon={<AiOutlineHeart />} text={"Likes"} active={active} link="/likes" />
+          <NavTab icon={<AiOutlineTag />} text={"Listings"} active={active} link="/listings" />
       </div>
     </div>
   );
 }
+
+const NavTab = ({
+  icon,
+  text,
+  active,
+  link,
+}: {
+  icon: JSX.Element;
+  text: string;
+  active: string;
+  link: string;
+}) => {
+  return (
+    <Link href={link}>
+    <div
+      className={`rounded-md transition duration-300 ease-in-out border border-greay-400 text-md flex justify-center items-center px-4 py-1 ml-5 cursor-pointer hover:rounded-lg hover:shadow-md ${
+        active == text.toLowerCase() ? "text-indigo-50 bg-indigo-500 hover:shadow-md hover:shadow-indigo-500/20" : "bg-white text-gray-900 "
+      } `}
+    >
+      {icon}
+      <span className="ml-2">{text}</span>
+    </div>
+    </Link>
+  );
+};
