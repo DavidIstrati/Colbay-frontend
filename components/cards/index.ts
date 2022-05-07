@@ -1,5 +1,8 @@
-import { Card } from "./card";
-
+import { CardProps, Card, PreviewCard, LoadingCard } from "./card";
+import { CustomGridLayout, IntegrationGridLayout } from "./gridLayout";
 export {
-    Card
+    Card, PreviewCard, LoadingCard, CustomGridLayout, IntegrationGridLayout
+}
+export type {
+    CardProps
 }

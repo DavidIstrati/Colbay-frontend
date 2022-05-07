@@ -1,6 +1,12 @@
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import type { NextPage } from "next";
-import { Card, Navbar, PageSearch } from "../components";
+import {
+  Card,
+  CardProps,
+  IntegrationGridLayout,
+  Navbar,
+  PageSearch,
+} from "../components";
 import GridLayout from "react-grid-layout";
 import { SizeMe } from "react-sizeme";
 import { useState, useEffect } from "react";
@@ -13,10 +19,10 @@ const Likes: NextPage = () => {
   const { user, login, logout } = useAuth();
 
   useEffect(() => {
-    onPageLoad(true, true, user)
+    onPageLoad(true, true, user);
   }, []);
 
-  const [layout, setLayout] = useState();
+  const [layout, setLayout] = useState([]);
 
   const { isLoading, error, data } = useQuery("likes", () =>
     getLikes(user?.userId).then((res) => {
@@ -65,35 +71,35 @@ const Likes: NextPage = () => {
               />
             </div>
           </div>
-          <SizeMe>
-            {({ size }) => (
-              <GridLayout
-                className="layout"
-                useCSSTransforms={true}
-                layout={layout}
-                cols={12}
-                rowHeight={50}
-                width={size.width}
-                containerPadding={[0, 0]}
-                margin={[40, 40]}
-              >
-                {data &&
-                  data.map(({ Listings }, index) => (
-                    <div key={Listings.listingId}>
-                      <Card
-                        id={Listings.listingId}
-                        title={Listings.title}
-                        price={Listings.price}
-                        description={Listings.description}
-                        likes={Listings.likes}
-                        image={Listings.image}
-                        userId={user?.userId}
-                      />
-                    </div>
-                  ))}
-              </GridLayout>
-            )}
-          </SizeMe>
+          <IntegrationGridLayout layout={layout} isLoading={isLoading}>
+            {data &&
+              data.map(
+                ({
+                  Listings: {
+                    listingId,
+                    title,
+                    price,
+                    description,
+                    likes,
+                    image,
+                  },
+                }: {
+                  Listings: CardProps;
+                }) => (
+                  <div key={listingId}>
+                    <Card
+                      listingId={listingId}
+                      title={title}
+                      price={price}
+                      description={description}
+                      likes={likes}
+                      image={image}
+                      userId={user?.userId}
+                    />
+                  </div>
+                )
+              )}
+          </IntegrationGridLayout>
         </div>
       </div>
     </div>

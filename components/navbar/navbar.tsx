@@ -8,7 +8,7 @@ export default function Navbar({ active }: { active: string }): JSX.Element {
       <div className="flex flex-row h-full ml-20">
           <NavTab icon={<AiOutlineHome />} text={"Home"} active={active} link="/search" />
           <NavTab icon={<AiOutlineHeart />} text={"Likes"} active={active} link="/likes" />
-          <NavTab icon={<AiOutlineTag />} text={"Listings"} active={active} link="/listings" />
+          <NavTab icon={<AiOutlineTag />} text={"Listings"} active={active} link="/listing" />
       </div>
     </div>
   );

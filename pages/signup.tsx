@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { useEffect, useState, useRef } from "react";
-import { TextInput, EmailInput } from "../components";
+import { TextInput } from "../components";
 import { postUser } from "../api";
 
 import { useAuth } from "../helpers";

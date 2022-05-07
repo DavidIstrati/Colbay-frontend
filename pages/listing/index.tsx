@@ -1,11 +1,12 @@
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import type { NextPage } from "next";
-import { Card, Navbar, PageSearch } from "../components";
+import { Card, Navbar, PageSearch } from "../../components";
 import GridLayout from "react-grid-layout";
 import { SizeMe } from "react-sizeme";
 import { useState, useEffect } from "react";
 
-import { onPageLoad, useAuth } from "../helpers";
+import { onPageLoad, useAuth } from "../../helpers";
+import Link from "next/link";
 
 const Lisitngs: NextPage = () => {
   const { user, login, logout } = useAuth();
@@ -74,9 +75,16 @@ const Lisitngs: NextPage = () => {
             </div>
           </div>
           <div className="my-10 w-full flex justify-center items-center">
-            <span className="bg-gradient px-4 py-2 text-white rounded-md cursor-pointer">
-              + New Listing
-            </span>
+            <Link href="/listing/create">
+              <span
+                className="bg-gradient px-4 py-2 text-white rounded-md cursor-pointer"
+                data-aos="fade-up"
+                data-aos-duration="800"
+                data-aos-delay="800"
+              >
+                + New Listing
+              </span>
+            </Link>
           </div>
           <SizeMe>
             {({ size }) => (

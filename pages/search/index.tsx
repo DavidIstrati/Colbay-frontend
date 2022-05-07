@@ -1,17 +1,16 @@
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
-import GridLayout from "react-grid-layout";
-import { SizeMe } from "react-sizeme";
+
+import { AiOutlineSearch } from "react-icons/ai";
 
 import {
-  AiOutlineHeart,
-  AiOutlineSearch,
-  AiOutlineArrowRight,
-} from "react-icons/ai";
+  CardProps,
+  Card,
+  IntegrationGridLayout,
+  Navbar,
+} from "../../components";
 
-import { Card, Navbar } from "../../components";
-
-import { searchListings, postLike } from "../../api";
+import { searchListings } from "../../api";
 
 import { useQuery } from "react-query";
 
@@ -50,18 +49,20 @@ const Search: NextPage = () => {
   const [layout, setLayout] = useState([]);
 
   const { isLoading, error, data } = useQuery(
-    `searchListings_term_${"furniture"}`,
+    `searchListings_term_${q}`,
     () =>
       searchListings(undefined, "furniture").then((res) => {
         setLayout(
-          res.data.map(({ listingId }, index) => ({
-            i: listingId,
-            x: 3 * (index % 4),
-            y: 4 * ~~(index / 4),
-            w: 3,
-            h: 4,
-            static: true,
-          }))
+          res.data.map(
+            ({ listingId }: { listingId: string }, index: number) => ({
+              i: listingId,
+              x: 3 * (index % 4),
+              y: 4 * ~~(index / 4),
+              w: 3,
+              h: 4,
+              static: true,
+            })
+          )
         );
         console.log(res);
         return res.data;
@@ -76,7 +77,7 @@ const Search: NextPage = () => {
   );
 
   return (
-    <div className="w-screen inline bg-slate-100 flex justify-center items-center -z-40 absolute font-spaceGrotesk bg-white">
+    <div className="w-screen inline-flex bg-slate-100 justify-center items-center -z-40 absolute font-spaceGrotesk">
       <div className="w-full min-h-screen flex flex-col">
         <Navbar active="home" />
         <div className="w-screen flex flex-row items-stretch lg:px-10 xl:px-20 2xl:px-60 py-4 bg-white z-1 shadow">
@@ -115,47 +116,32 @@ const Search: NextPage = () => {
           <div className="w-full inline-flex  pl-2 flex-col">
             <span className="font-spaceGrotesk font-bold text-lg">Results</span>
             <div className="w-full flex flex-row flex-wrap">
-              <SizeMe>
-                {({ size }) => (
-                  <GridLayout
-                    className="layout"
-                    useCSSTransforms={true}
-                    layout={layout}
-                    cols={12}
-                    rowHeight={50}
-                    width={size.width}
-                    containerPadding={[0, 0]}
-                    margin={[40, 40]}
-                  >
-                    {data &&
-                      data.map(
-                        (
-                          {
-                            listingId,
-                            title,
-                            price,
-                            description,
-                            likes,
-                            image,
-                          },
-                          index
-                        ) => (
-                          <div key={listingId}>
-                            <Card
-                              id={listingId}
-                              title={title}
-                              price={price}
-                              description={description}
-                              likes={likes}
-                              image={image}
-                              userId={user?.userId}
-                            />
-                          </div>
-                        )
-                      )}
-                  </GridLayout>
-                )}
-              </SizeMe>
+              <IntegrationGridLayout layout={layout} isLoading={isLoading}>
+                {layout.length !== 0 &&
+                  data &&
+                  data.map(
+                    ({
+                      listingId,
+                      title,
+                      price,
+                      description,
+                      likes,
+                      image,
+                    }: CardProps) => (
+                      <div key={listingId} className="w-full h-full">
+                        <Card
+                          listingId={listingId}
+                          title={title}
+                          price={price}
+                          description={description}
+                          likes={likes}
+                          image={image}
+                          userId={user?.userId}
+                        />
+                      </div>
+                    )
+                  )}
+              </IntegrationGridLayout>
             </div>
           </div>
         </div>

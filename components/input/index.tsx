@@ -1,3 +1,3 @@
-import { TextInput, EmailInput } from "./textInput";
+import { TextInput } from "./textInput";
 
-export {TextInput, EmailInput}
+export {TextInput}
