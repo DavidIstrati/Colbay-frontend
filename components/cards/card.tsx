@@ -6,6 +6,9 @@ import {
   AiFillHeart,
   AiOutlineHeart,
 } from "react-icons/ai";
+
+import { BsArrowUpRight } from "react-icons/bs";
+
 import { useSpring, easings, animated, to } from "react-spring";
 import { PulseFill, SuspenseImage } from "..";
 import { postLike } from "../../api";
@@ -61,55 +64,50 @@ export const Card = ({
     <animated.div style={getProps(index)} className="w-full h-full">
       <div
         key={listingId}
-        className="w-full h-full bg-white border border-slate-200 rounded-lg relative overflow-hidden transition duration-500 ease-in-out shadow hover:shadow-lg hover:scale-105"
+        className="w-full h-full rounded-lg relative overflow-hidden transition duration-500 ease-in-out hover:scale-105"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        <div className="h-3/5 w-full flex justify-center">
+        <div className="h-3/5 w-full flex justify-center relative">
           <Suspense fallback={<PulseFill />}>
             {image != "" && (
               <SuspenseImage
                 alt={description}
                 imageSrc={`${image}`}
-                className="w-full h-full rounded-t-md"
+                className={`w-full h-full rounded-md transition duration-200 ease-in-out ${hover ? "shadow-md" : "shadow"}`}
               />
             )}
           </Suspense>
-          {!loading && (
+          <div
+            className={`absolute -bottom-5 right-2 border border-slate-200 shadow rounded-full w-10 h-10 flex justify-center items-center   transition  duration-500 ease-in-out ${
+              like ? "bg-pink-50 shadow-pink-400/30" : "bg-slate-50"
+            } ${hover || like ? "opcaity-100" : "opacity-0"} `}
+          >
             <div
-              className={`w-full h-2/5 transition duration-500 ease-in-out ${
-                hover ? "translate-0 opacity-100" : "translate-y-full opacity-0"
-              } absolute bottom-0 right-0 rounded-lg`}
+              className={`w-full h-full text-md transition  duration-700 ease-in-out border-pink-50 text-pink-500 rounded-full flex justify-center items-center cursor-pointer ${
+                like ? "scale-150 rotate-720" : ""
+              }`}
+              onClick={() => {
+                postLike({
+                  listingId: listingId,
+                  userId: userId ? userId : "",
+                }).then(() => setLike(!like));
+              }}
             >
-              <div className="w-full h-full p-4 flex flex-row justify-center items-center bg-white border-t border-slate-400 rounded-b-lg">
-                <Link href={`/listing/${listingId}`}>
-                  <div className="w-28 h-10 font-bold text-sm text-slate-900 transition duration-300 ease-in-out border border-slate-300 rounded-lg hover:text-emerald-500 hover:border-emerald-300   flex justify-center items-center cursor-pointer">
-                    <span className="mr-1">Buy Now</span>
-                    <AiOutlineShoppingCart />
-                  </div>
-                </Link>
-                <div
-                  className={`w-10 h-10 text-md transition  duration-700 ease-in-out border-pink-50 text-pink-500 rounded-lg  ml-2  flex justify-center items-center cursor-pointer ${
-                    like ? "scale-150 rotate-720" : ""
-                  }`}
-                  onClick={() => {
-                    postLike({
-                      listingId: listingId,
-                      userId: userId ? userId : "",
-                    }).then(() => setLike(!like));
-                  }}
-                >
-                  <span>{likes}</span>
-                  {like ? <AiFillHeart /> : <AiOutlineHeart />}
-                </div>
-              </div>
+              <span>{likes}</span>
+              {like ? <AiFillHeart /> : <AiOutlineHeart />}
             </div>
-          )}
+          </div>
         </div>
-        <div className="h-2/5 w-full flex flex-col px-4 pb-2">
+        <div className="h-2/5 w-full flex flex-col pb-2">
           <div className="w-full h-1 bg-slate-100 mt-2"></div>
-          <span className="text-md text-gray-900 font-bold mt-1">{title}</span>
-          <span className="text-sm text-emerald-500">${price}</span>
+          <span className="text-xl text-slate-900 font-bold">
+            ${parseInt(price).toFixed(2)}
+          </span>
+          <span className="text-md text-slate-900 mt-1">{title}</span>
+          <Link href={`/listing/${listingId}`}>
+            <BsArrowUpRight className="text-sm" />
+          </Link>
           {/* <div className="w-full h-full mt-1">
             <span className="text-xs text-slate-300 text-ellipsis ">
               {description}
@@ -132,11 +130,11 @@ export const PreviewCard = (props: CardProps) => {
 export const LoadingCard = ({ index = 0 }: { index?: number }) => {
   return (
     <animated.div style={getProps(index)} className="w-full h-full">
-      <div className="w-full h-full bg-white border border-slate-200 rounded-lg relative shadow">
+      <div className="w-full h-full rounded-lg relative">
         <div className="h-3/5 w-full flex justify-center">
           <div className="bg-slate-200 animate-pulse w-full h-full rounded-t-md" />
         </div>
-        <div className="h-2/5 w-full flex flex-col px-4 pb-2">
+        <div className="h-2/5 w-full flex flex-col pb-2">
           <div className="text-md bg-slate-200  font-bold mt-4  w-10 h-4 animate-pulse rounded-lg"></div>
           <div className="text-sm bg-slate-200 w-4 h-2 animate-pulse mt-4 rounded-lg"></div>
           <div className="w-full h-full mt-4">

@@ -153,11 +153,7 @@ const Search: NextPage = () => {
             </div>
           </div>
         </div>
-        <div className="w-full inline-flex flex-row lg:px-10 xl:px-20 2xl:px-60 mt-20">
-          <div className="w-full inline-flex  pl-2 flex-col">
-            <span className="font-spaceGrotesk font-bold text-lg">Results</span>
-          </div>
-        </div>
+        <div className="w-full inline-flex flex-row lg:px-10 xl:px-20 2xl:px-60 mt-20"></div>
 
         <IntegrationGridLayout
           layout={layout}

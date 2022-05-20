@@ -37,6 +37,7 @@ const Home: NextPage = () => {
           >
             <PageSearch
               placeholder="What are you looking for?"
+              required={true}
               initialSearch={""}
               onSubmit={(search) => Router.push(`/search?q=${search}`)}
             />
@@ -50,7 +51,7 @@ const Home: NextPage = () => {
             <span>345 active listings</span>
           </div> */}
         </div>
-        <div className="w-full flex justify-start flex-col pb-28 px-20">
+        <div className="w-full flex justify-start flex-col pb-28 lg:px-10 xl:px-20 2xl:px-60">
           <span className="font-bold pl-2 text-xl">Popular Categories</span>
           <div className="w-full h-1 bg-gray-100 my-2 mx-2"></div>
           <div className="w-full flex flex-row flex-wrap">

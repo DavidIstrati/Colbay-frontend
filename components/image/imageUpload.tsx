@@ -52,7 +52,7 @@ export default function ImageUpload({
       setCrop(undefined); // Makes crop preview update between images.
       const reader = new FileReader();
       reader.addEventListener("load", () =>
-        setImgSrc(reader.result.toString() || "")
+        setImgSrc(reader.result?.toString() || "")
       );
       reader.readAsDataURL(e.target.files[0]);
     }
@@ -181,8 +181,8 @@ export default function ImageUpload({
             style={{
               border: "1px solid black",
               objectFit: "contain",
-              width: completedCrop.width,
-              height: completedCrop.height,
+              width: completedCrop?.width,
+              height: completedCrop?.height,
             }}
           />
         )}

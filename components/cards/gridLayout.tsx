@@ -13,7 +13,7 @@ type layoutItem = {
 };
 
 interface CustomGridLayout {
-  layout: layoutItem[];
+  layout?: layoutItem[];
   width: number | null;
   children?: JSX.Element[] | JSX.Element | undefined;
 }
@@ -25,25 +25,39 @@ export const CustomGridLayout = ({
 }: CustomGridLayout) => {
   const xMargin = width ? (width - 1144) / 3 : 40;
   return width ? (
-    <GridLayout
-      className="layout"
-      useCSSTransforms={true}
-      layout={layout}
-      cols={12}
-      rowHeight={50}
-      width={width}
-      containerPadding={[0, 0]}
-      margin={[xMargin, 40]}
-    >
-      {children}
-    </GridLayout>
+    layout ? (
+      <GridLayout
+        className="layout"
+        useCSSTransforms={true}
+        layout={layout}
+        cols={12}
+        rowHeight={50}
+        width={width}
+        containerPadding={[0, 0]}
+        margin={[xMargin, 40]}
+      >
+        {children}
+      </GridLayout>
+    ) : (
+      <GridLayout
+        className="layout"
+        useCSSTransforms={true}
+        cols={12}
+        rowHeight={50}
+        width={width}
+        containerPadding={[0, 0]}
+        margin={[xMargin, 40]}
+      >
+        {children}
+      </GridLayout>
+    )
   ) : (
     <></>
   );
 };
 
 interface IntegrationGridLayout {
-  layout: layoutItem[];
+  layout?: layoutItem[];
   isLoading: boolean;
   isError?: boolean;
   children?: JSX.Element[] | JSX.Element | undefined;

@@ -64,10 +64,12 @@ const Likes: NextPage = () => {
       );
   }, [data]);
 
+  const [search, setSearch] = useState<string>("");
+
   return (
     <div className="w-screen inline-flex bg-slate-100 justify-center items-center -z-40 absolute font-spaceGrotesk">
       <div className="w-full min-h-screen flex flex-col">
-        <Navbar active="likes" user={user}/>
+        <Navbar active="likes" user={user} />
         <div className="w-full px-40 pt-20 flex flex-col">
           <div className="w-full flex justify-center items-center">
             <span
@@ -89,22 +91,20 @@ const Likes: NextPage = () => {
               <PageSearch
                 initialSearch={""}
                 placeholder={"Search in likes"}
-                onSubmit={(search: string) => ""}
+                onSubmit={(search: string) =>
+                  setSearch(search.toLocaleLowerCase())
+                }
               />
             </div>
           </div>
         </div>
         <div className="mt-20">
-          <IntegrationGridLayout
-            layout={layout}
-            isLoading={isLoading}
-            isError={isError}
-          >
+          <IntegrationGridLayout isLoading={isLoading} isError={isError}>
             {layout.length !== 0 &&
               data &&
-              data.map(
-                (
-                  {
+              data
+                .filter(
+                  ({
                     Listings: {
                       listingId,
                       title,
@@ -115,23 +115,47 @@ const Likes: NextPage = () => {
                     },
                   }: {
                     Listings: CardProps;
-                  },
-                  index: number
-                ) => (
-                  <div key={listingId}>
-                    <Card
-                      listingId={listingId}
-                      title={title}
-                      price={price}
-                      description={description}
-                      likes={likes}
-                      image={image}
-                      index={index}
-                      userId={user?.userId}
-                    />
-                  </div>
+                  }) => title.toLowerCase().startsWith(search)
                 )
-              )}
+                .map(
+                  (
+                    {
+                      Listings: {
+                        listingId,
+                        title,
+                        price,
+                        description,
+                        likes,
+                        image,
+                      },
+                    }: {
+                      Listings: CardProps;
+                    },
+                    index: number
+                  ) => (
+                    <div
+                      key={index}
+                      data-grid={{
+                        x: 3 * (index % 4),
+                        y: 4 * ~~(index / 4),
+                        w: 3,
+                        h: 4,
+                        static: true,
+                      }}
+                    >
+                      <Card
+                        listingId={listingId}
+                        title={title}
+                        price={price}
+                        description={description}
+                        likes={likes}
+                        image={image}
+                        index={index}
+                        userId={user?.userId}
+                      />
+                    </div>
+                  )
+                )}
           </IntegrationGridLayout>
         </div>
       </div>
