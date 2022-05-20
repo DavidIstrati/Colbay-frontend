@@ -2,12 +2,12 @@ import axios from "axios"
 
 const domain = "http://127.0.0.1:8000"
 
-const getListing = (userId: string, listingId:string) => {
-    return axios.get(`${domain}/listing`, { params: { userId, listingId }})
+const getListing = async (listingId:string) => {
+    return await axios.get(`${domain}/listing`, { params: {listingId }})
 }
 
-const getListings = (userId: string) => {
-    return axios.get(`${domain}/listings`, { params: { userId }})
+const getListings = async (userId: string) => {
+    return await axios.get(`${domain}/listings`, { params: { userId }})
 }
 
 interface Listing {
@@ -19,12 +19,12 @@ interface Listing {
     category: string
 }
 
-const postListing = (body: Listing) => {
-    return axios.post(`${domain}/listing`, body)
+const postListing = async (body: Listing) => {
+    return await axios.post(`${domain}/listing`, body)
 }
 
-const searchListings = (term?: string, category?: string) => {
-    return axios.get(`${domain}/searchListings`, { params: { term, category }})
+const searchListings = async (term?: string, category?: string) => {
+    return await axios.get(`${domain}/searchListings`, { params: { term, category }})
 }
 
 export {

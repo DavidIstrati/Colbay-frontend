@@ -1,3 +1,3 @@
-import { TextInput } from "./textInput";
+import { TextInput, OnboardingTextInput } from "./textInput";
 
-export {TextInput}
+export {TextInput, OnboardingTextInput}

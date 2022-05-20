@@ -8,6 +8,7 @@ import Router from "next/router";
 import { Navbar } from "../../components";
 
 import { onPageLoad, useAuth } from "../../helpers";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   const { user, login, logout } = useAuth();
@@ -17,9 +18,9 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <div className="w-screen h-screen  flex justify-center items-center -z-40 absolute font-spaceGrotesk bg-white">
+    <div className="w-screen h-screen  flex justify-center items-center -z-40 absolute font-spaceGrotesk bg-slate-100">
       <div className="w-full h-full flex flex-col">
-        <Navbar active="home" />
+        <Navbar active="home" user={user} />
         <div className="w-full h-full flex flex-col justify-center items-center px-40">
           <div
             className="h-20 inline"
@@ -59,49 +60,57 @@ const Home: NextPage = () => {
                 title: "Books",
                 description: "Class textbooks, novels and others",
                 color: "bg-orange-100",
+                category: "books",
               },
               {
                 imgPath: "../illustrations/monitor.png",
                 title: "Monitors",
                 description: "Class textbooks, novels and others",
                 color: "bg-indigo-100",
+                category: "monitors",
               },
               {
                 imgPath: "../illustrations/furniture.png",
                 title: "Furniture",
                 description: "Class textbooks, novels and others",
                 color: "bg-rose-100",
+                category: "furniture",
               },
               {
                 imgPath: "../illustrations/electronics.png",
                 title: "Electronics",
                 description: "Class textbooks, novels and others",
                 color: "bg-emerald-100",
+                category: "electronics",
               },
               {
                 imgPath: "../illustrations/light.png",
                 title: "Lights",
                 description: "Class textbooks, novels and others",
                 color: "bg-sky-100",
+                category: "lights",
               },
               {
                 imgPath: "../illustrations/other.png",
                 title: "Other",
                 description: "Class textbooks, novels and others",
                 color: "bg-purple-100",
+                category: "other",
               },
               {
                 imgPath: "../illustrations/everything.png",
                 title: "All Listings",
                 description: "Class textbooks, novels and others",
                 color: "bg-pink-100",
+                category: "all",
               },
-            ].map(({ imgPath, title, description, color }) => (
+            ].map(({ imgPath, title, description, color, category }) => (
               <CategoryItem
                 imgPath={imgPath}
                 title={title}
                 description={description}
                 color={color}
+                category={category}
               />
             ))}
           </div>
@@ -116,26 +125,30 @@ const CategoryItem = ({
   title,
   description,
   color,
+  category,
 }: {
   imgPath: string;
   title: string;
   description: string;
   color: string;
+  category: string;
 }) => {
   return (
-    <div className="w-1/4 h-28 p-2">
-      <div
-        className={`w-full h-full rounded-lg  ${color} transition duration-500 ease-in-out hover:shadow-md border border-gray-300 flex flex-row`}
-      >
-        <div className="w-1/3 h-full p-4 flex justify-center items-center">
-          <img src={imgPath} className="max-h-full max-w-full" />
-        </div>
-        <div className="w-2/3 h-full px-2 py-4 flex flex-col justify-center items-start">
-          <span className="text-lg font-bold">{title}</span>
-          <span className="text-xs">{description}</span>
+    <Link href={`/search?category=${category}`} key={category}>
+      <div className="w-1/4 h-28 p-2 cursor-pointer">
+        <div
+          className={`w-full h-full rounded-lg  ${color} transition duration-500 ease-in-out hover:shadow-md border border-gray-300 flex flex-row`}
+        >
+          <div className="w-1/3 h-full p-4 flex justify-center items-center">
+            <img src={imgPath} className="max-h-full max-w-full" />
+          </div>
+          <div className="w-2/3 h-full px-2 py-4 flex flex-col justify-center items-start">
+            <span className="text-lg font-bold">{title}</span>
+            <span className="text-xs">{description}</span>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

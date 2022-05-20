@@ -5,7 +5,7 @@ import { userProps } from "./storage/context";
 const onPageLoad = (
   initAos: boolean,
   userRestricted: boolean,
-  user?: userProps
+  user?: userProps | null
 ) => {
   if (initAos) {
     AOS.init();

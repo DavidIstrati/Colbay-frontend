@@ -1,12 +1,17 @@
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import type { NextPage } from "next";
-import { Card, Navbar, PageSearch } from "../../components";
-import GridLayout from "react-grid-layout";
-import { SizeMe } from "react-sizeme";
+import {
+  Card,
+  CardProps,
+  IntegrationGridLayout,
+  Navbar,
+  PageSearch,
+} from "../../components";
 import { useState, useEffect } from "react";
 
 import { onPageLoad, useAuth } from "../../helpers";
 import Link from "next/link";
+import { getListings } from "../../api";
 
 const Lisitngs: NextPage = () => {
   const { user, login, logout } = useAuth();
@@ -15,41 +20,48 @@ const Lisitngs: NextPage = () => {
     onPageLoad(true, true, user);
   }, []);
 
-  const [layout, setLayout] = useState([
-    {
-      i: "add_new_listing",
-      x: 0,
-      y: 0,
-      w: 3,
-      h: 4,
-      static: true,
-    },
-  ]);
+  const [layout, setLayout] = useState([]);
 
-  const [layoutData, setLayoutData] = useState([]);
-  //   const { isLoading, error, data } = useQuery("listings", () =>
-  //     getLikes(user?.userId).then((res) => {
-  //       console.log(res)
-  //       setLayout(
-  //         res.data.map(({ Listings }, index) => ({
-  //           i: Listings.listingId,
-  //           x: 3 * (index % 5),
-  //           y: 7 * ~~(index / 4),
-  //           w: 3,
-  //           h: 7,
-  //           static: true,
-  //         }))
-  //       );
-  //       console.log(res);
-  //       return res.data;
-  //     })
-  //   );
+  const { isLoading, isError, data } = useQuery(
+    "listings",
+    async () =>
+      user &&
+      (await getListings(user?.userId)
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw Error(error);
+        })),
+    {
+      cacheTime: 5 * 60 * 1000,
+      refetchOnMount: true,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retry: false,
+    }
+  );
+
+  useEffect(() => {
+    data &&
+      setLayout(
+        data.map(({ listingId }: { listingId: string }, index: number) => ({
+          i: listingId,
+          x: 3 * (index % 4),
+          y: 4 * ~~(index / 4),
+          w: 3,
+          h: 4,
+          static: true,
+        }))
+      );
+  }, [data]);
 
   return (
-    <div className="w-screen inline bg-slate-100 flex justify-center items-center -z-40 absolute font-spaceGrotesk bg-white">
+    <div className="w-screen inline-flex bg-slate-100 justify-center items-center -z-40 absolute font-spaceGrotesk">
       <div className="w-full min-h-screen flex flex-col">
-        <Navbar active="listings" />
-        <div className="w-full p-40 pt-20 flex flex-col">
+        <Navbar active="listings"  user={user}/>
+        <div className="w-full px-40 pt-20 flex flex-col">
           <div className="w-full flex justify-center items-center">
             <span
               className="text-5xl font-bold"
@@ -86,41 +98,41 @@ const Lisitngs: NextPage = () => {
               </span>
             </Link>
           </div>
-          <SizeMe>
-            {({ size }) => (
-              <GridLayout
-                className="layout mt-10"
-                useCSSTransforms={true}
-                layout={layout}
-                cols={15}
-                rowHeight={50}
-                width={size.width}
-                containerPadding={[0, 0]}
-                margin={[40, 40]}
-              >
-                {layoutData &&
-                  layoutData.map(
-                    (
-                      { listingId, title, price, description, likes, image },
-                      index
-                    ) => (
-                      <div key={listingId}>
-                        <Card
-                          id={listingId}
-                          title={title}
-                          price={price}
-                          description={description}
-                          likes={likes}
-                          image={image}
-                          userId={user?.userId}
-                        />
-                      </div>
-                    )
-                  )}
-              </GridLayout>
-            )}
-          </SizeMe>
         </div>
+        <IntegrationGridLayout
+          layout={layout}
+          isLoading={isLoading}
+          isError={isError}
+        >
+          {layout.length !== 0 &&
+            data &&
+            data.map(
+              (
+                {
+                  listingId,
+                  title,
+                  price,
+                  description,
+                  likes,
+                  image,
+                }: CardProps,
+                index: number
+              ) => (
+                <div key={listingId} className="w-full h-full">
+                  <Card
+                    listingId={listingId}
+                    title={title}
+                    price={price}
+                    description={description}
+                    likes={likes}
+                    image={image}
+                    index={index}
+                    userId={user?.userId}
+                  />
+                </div>
+              )
+            )}
+        </IntegrationGridLayout>
       </div>
     </div>
   );

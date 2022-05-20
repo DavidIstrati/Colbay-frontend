@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { AiOutlineSearch } from "react-icons/ai";
 
@@ -16,9 +16,11 @@ import { useQuery } from "react-query";
 
 import { useRouter } from "next/router";
 
-import { useAuth, useLocalStorage } from "../../helpers";
+import { useAuth } from "../../helpers";
 
 import AOS from "aos";
+
+type queryParameter = string | undefined;
 
 const Search: NextPage = () => {
   useEffect(() => {
@@ -29,62 +31,89 @@ const Search: NextPage = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/signup");
-    }
-  }, []);
+  const { q, category }: { q: queryParameter; category: queryParameter } =
+    router.query as { q: queryParameter; category: queryParameter };
 
-  const { q } = router.query;
+  const [search, setSearch] = useState<queryParameter>(q);
 
-  const [search, setSearch] = useLocalStorage<string | string[]>(
-    "query",
-    q ? q : ""
-  );
+  const [searchQuery, setSearchQuery] = useState<queryParameter>(q);
+
+  const [categoryQuery, setCategoryQuery] = useState<queryParameter>(category);
 
   useEffect(() => {
-    setSearch(q ? q : "");
+    setCategoryQuery(category);
+  }, [category]);
+
+  useEffect(() => {
+    setSearchQuery(q);
+    setSearch(q);
   }, [q]);
+
+  const shallowQueryChange = (q: queryParameter, category: queryParameter) => {
+    let url = `/search/?`;
+    if (q) url += `q=${q}`;
+    if (category) url += `&category=${category}`;
+    router.push(
+      {
+        pathname: `/search`,
+        query: {
+          q,
+          category,
+        },
+      },
+      url,
+      { shallow: true }
+    );
+  };
 
   const [layout, setLayout] = useState([]);
 
-  const { isLoading, error, data } = useQuery(
-    `searchListings_term_${q}`,
-    () =>
-      searchListings(undefined, "furniture").then((res) => {
-        setLayout(
-          res.data.map(
-            ({ listingId }: { listingId: string }, index: number) => ({
-              i: listingId,
-              x: 3 * (index % 4),
-              y: 4 * ~~(index / 4),
-              w: 3,
-              h: 4,
-              static: true,
-            })
-          )
-        );
-        console.log(res);
-        return res.data;
-      }),
+  const { isLoading, isError, data } = useQuery(
+    `searchListings?q=${searchQuery}&category=${categoryQuery}`,
+    async () =>
+      await searchListings(searchQuery, categoryQuery)
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw Error(error);
+        }),
     {
       cacheTime: 5 * 60 * 1000,
-      refetchOnMount: false,
+      refetchOnMount: true,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
       retry: false,
     }
   );
 
+  useEffect(() => {
+    data &&
+      setLayout(
+        data.map(({ listingId }: { listingId: string }, index: number) => ({
+          i: listingId,
+          x: 3 * (index % 4),
+          y: 4 * ~~(index / 4),
+          w: 3,
+          h: 4,
+          static: true,
+        }))
+      );
+  }, [data]);
+
   return (
     <div className="w-screen inline-flex bg-slate-100 justify-center items-center -z-40 absolute font-spaceGrotesk">
       <div className="w-full min-h-screen flex flex-col">
-        <Navbar active="home" />
+        <Navbar active="home" user={user} />
         <div className="w-screen flex flex-row items-stretch lg:px-10 xl:px-20 2xl:px-60 py-4 bg-white z-1 shadow">
           <div className="w-1/2 h-14 flex flex-row justify-start items-center rounded-l-md border border-slate-200 bg-indigo-500 rounded-lg">
             <div
               className="w-14 h-14  text-xl flex justify-center items-center rounded-l-lg text-white "
-              onClick={() => router.push(`/search?q=${search}`)}
+              onClick={() => {
+                setSearchQuery(search);
+                shallowQueryChange(search, category);
+              }}
             >
               <AiOutlineSearch />
             </div>
@@ -97,11 +126,23 @@ const Search: NextPage = () => {
           </div>
           <div className="w-1/2 flex flex-row">
             <div className="px-2 pl-4 h-full flex flex-col">
-              <select className=" px-5 w-60 py-2 h-full bg-slate-50 appearance-none border border-slate-200 text-slate-500">
-                <option value="" disabled selected>
+              <select
+                className=" px-5 w-60 py-2 h-full bg-slate-50 appearance-none border border-slate-200 text-slate-500"
+                value={categoryQuery}
+                onChange={(e) => {
+                  setSearchQuery(search);
+                  setCategoryQuery(e.target.value);
+                  shallowQueryChange(searchQuery, e.target.value);
+                }}
+              >
+                <option value={undefined} disabled selected>
                   Category
                 </option>
-                <option>Books</option>
+                <option value={"books"}>Books</option>
+                <option value={"monitors"}>Monitors</option>
+                <option value={"furniture"}>Furniture</option>
+                <option value={"electronics"}>Electronics</option>
+                <option value={"lights"}>Lights</option>
               </select>
             </div>
             <div className="px-2 h-14 flex flex-col">
@@ -115,36 +156,42 @@ const Search: NextPage = () => {
         <div className="w-full inline-flex flex-row lg:px-10 xl:px-20 2xl:px-60 mt-20">
           <div className="w-full inline-flex  pl-2 flex-col">
             <span className="font-spaceGrotesk font-bold text-lg">Results</span>
-            <div className="w-full flex flex-row flex-wrap">
-              <IntegrationGridLayout layout={layout} isLoading={isLoading}>
-                {layout.length !== 0 &&
-                  data &&
-                  data.map(
-                    ({
-                      listingId,
-                      title,
-                      price,
-                      description,
-                      likes,
-                      image,
-                    }: CardProps) => (
-                      <div key={listingId} className="w-full h-full">
-                        <Card
-                          listingId={listingId}
-                          title={title}
-                          price={price}
-                          description={description}
-                          likes={likes}
-                          image={image}
-                          userId={user?.userId}
-                        />
-                      </div>
-                    )
-                  )}
-              </IntegrationGridLayout>
-            </div>
           </div>
         </div>
+
+        <IntegrationGridLayout
+          layout={layout}
+          isLoading={isLoading}
+          isError={isError}
+        >
+          {layout.length !== 0 &&
+            data?.map(
+              (
+                {
+                  listingId,
+                  title,
+                  price,
+                  description,
+                  likes,
+                  image,
+                }: CardProps,
+                index: number
+              ) => (
+                <div key={listingId} className="w-full h-full">
+                  <Card
+                    listingId={listingId}
+                    title={title}
+                    price={price}
+                    description={description}
+                    likes={likes}
+                    image={image}
+                    index={index}
+                    userId={user?.userId}
+                  />
+                </div>
+              )
+            )}
+        </IntegrationGridLayout>
       </div>
     </div>
   );

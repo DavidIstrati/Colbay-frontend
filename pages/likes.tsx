@@ -24,11 +24,36 @@ const Likes: NextPage = () => {
 
   const [layout, setLayout] = useState([]);
 
-  const { isLoading, error, data } = useQuery("likes", () =>
-    getLikes(user?.userId).then((res) => {
-      console.log(res);
+  interface data {
+    data: any;
+    status: number;
+  }
+
+  const { isLoading, isError, data } = useQuery(
+    "likes",
+    async () =>
+      user &&
+      (await getLikes(user?.userId)
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw Error(error);
+        })),
+    {
+      cacheTime: 5 * 60 * 1000,
+      refetchOnMount: true,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retry: false,
+    }
+  );
+
+  useEffect(() => {
+    data &&
       setLayout(
-        res.data.map(({ Listings }, index) => ({
+        data.map(({ Listings }: { Listings: CardProps }, index: number) => ({
           i: Listings.listingId,
           x: 3 * (index % 4),
           y: 4 * ~~(index / 4),
@@ -37,16 +62,13 @@ const Likes: NextPage = () => {
           static: true,
         }))
       );
-      console.log(res);
-      return res.data;
-    })
-  );
+  }, [data]);
 
   return (
-    <div className="w-screen inline bg-slate-100 flex justify-center items-center -z-40 absolute font-spaceGrotesk bg-white">
+    <div className="w-screen inline-flex bg-slate-100 justify-center items-center -z-40 absolute font-spaceGrotesk">
       <div className="w-full min-h-screen flex flex-col">
-        <Navbar active="likes" />
-        <div className="w-full p-40 pt-20 flex flex-col">
+        <Navbar active="likes" user={user}/>
+        <div className="w-full px-40 pt-20 flex flex-col">
           <div className="w-full flex justify-center items-center">
             <span
               className="text-5xl font-bold"
@@ -71,21 +93,31 @@ const Likes: NextPage = () => {
               />
             </div>
           </div>
-          <IntegrationGridLayout layout={layout} isLoading={isLoading}>
-            {data &&
+        </div>
+        <div className="mt-20">
+          <IntegrationGridLayout
+            layout={layout}
+            isLoading={isLoading}
+            isError={isError}
+          >
+            {layout.length !== 0 &&
+              data &&
               data.map(
-                ({
-                  Listings: {
-                    listingId,
-                    title,
-                    price,
-                    description,
-                    likes,
-                    image,
+                (
+                  {
+                    Listings: {
+                      listingId,
+                      title,
+                      price,
+                      description,
+                      likes,
+                      image,
+                    },
+                  }: {
+                    Listings: CardProps;
                   },
-                }: {
-                  Listings: CardProps;
-                }) => (
+                  index: number
+                ) => (
                   <div key={listingId}>
                     <Card
                       listingId={listingId}
@@ -94,6 +126,7 @@ const Likes: NextPage = () => {
                       description={description}
                       likes={likes}
                       image={image}
+                      index={index}
                       userId={user?.userId}
                     />
                   </div>

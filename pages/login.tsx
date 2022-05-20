@@ -1,191 +1,151 @@
-import type { NextPage } from "next";
-import { useEffect, useState, useRef } from "react";
-import { TextInput } from "../components";
-import { getUser } from "../api";
-
+import { NextPage } from "next";
+import Link from "next/link";
+import Router from "next/router";
+import { useEffect, useState } from "react";
+import { getUser, postUser } from "../api";
+import {
+  LandingPage,
+  InputPage,
+  AnimatedProgressBar,
+  ANIMATION_DURATION,
+} from "../components";
 import { useAuth } from "../helpers";
 
-import { useRouter } from "next/router";
-
-import { useForm } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
-
-import AOS from "aos";
-
 const Login: NextPage = () => {
-  useEffect(() => {
-    AOS.init();
-  }, []);
+  const [page, setPage] = useState<number>(1);
 
   const { user, login, logout } = useAuth();
 
-  const router = useRouter();
+  useEffect(() => {
+    if (user) {
+      Router.push("/search");
+    }
+  }, []);
 
-  if (user) {
-    router.push("/search");
-  }
+  const changePage = async (page: number) => {
+    await new Promise((r) => setTimeout(r, ANIMATION_DURATION));
+    setPage(page);
+  };
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const titles = {
+    landingPage: (
+      <>
+        <TitlePage>
+          <span>Welcome Back!</span>
+        </TitlePage>
+        <TitlePage>
+          <span></span>
+        </TitlePage>
+      </>
+    ),
+    email: (
+      <>
+        <TitlePage>
+          <span>Your Email</span>
+        </TitlePage>
+      </>
+    ),
+    password: (
+      <>
+        <TitlePage>
+          <span>Your Password</span>
+        </TitlePage>
+      </>
+    ),
+  };
   interface FormInputs {
     email: string;
     password: string;
   }
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormInputs>({
-    criteriaMode: "all",
-  });
-
-  const onSubmit = (data: FormInputs) => {
-    getUser(undefined, data.email, data.password).then((resp) => {
+  const onSubmit = () => {
+    console.log(password);
+    getUser(undefined, email, password).then((resp) => {
       login(resp.data);
-      router.push("/signup");
+      Router.push("/search");
+      console.log(resp);
     });
-    console.log(data);
   };
 
   return (
-    <div className="h-screen w-screen bg-slate-100 flex justify-center items-center -z-40 absolute background-stars">
-      <div
-        className="xl:w-1/3 2xl:w-1/4 h-2/3 bg-white p-10 transition duration-500 ease-in-out rounded-md border-2 border-gray-900 flex flex-col justify-center items-center relative
-      before:absolute
-      before:w-full
-      before:h-full
-      before:-z-10
-      before:bg-gradient-to-br
-    before:from-blue-300
-    before:to-emerald-200
-      before:rounded-md
-      before:-left-5
-      before:top-5
-      before:border-2
-      before:border-gray-900
-      hover:before:-translate-x-1
-      hover:before:translate-y-1
-      before:transition
-      before:duration-400
-      before:ease-in-out"
-      >
-        <div className="h-1/4 w-full flex justify-start items-center">
-          <span
-            className="text-6xl font-bold text-black"
-            data-aos="fade-up"
-            data-aos-duration="800"
-            data-aos-delay="0"
-          >
-            Welcome Back!
-          </span>
-        </div>
-        <div className="h-3/4  w-full">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="h-1/6 w-full">
-              <div
-                className="py-2 w-full h-full flex flex-col"
-                data-aos="fade-up"
-                data-aos-duration="800"
-                data-aos-delay="1200"
-              >
-                <TextInput
-                  reactFormProps={register("email", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 2,
-                      message: "This input is too small.",
-                    },
-                    maxLength: {
-                      value: 100,
-                      message: "This input exceed maxLength.",
-                    },
-                    pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: "Email is not valid",
-                    },
-                  })}
-                  placeholder="Email"
-                  label="Email"
-                  type="email"
-                ></TextInput>
-              </div>
-            </div>
-            <div className="h-1/6 w-full">
-              <div
-                className="py-2 w-full h-full flex flex-col"
-                data-aos="fade-up"
-                data-aos-duration="800"
-                data-aos-delay="1600"
-              >
-                <TextInput
-                  reactFormProps={register("password", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 2,
-                      message: "This input is too small.",
-                    },
-                    maxLength: {
-                      value: 100,
-                      message: "This input exceed maxLength.",
-                    },
-                  })}
-                  placeholder="Password"
-                  label="Password"
-                  type="password"
-                ></TextInput>
-              </div>
-            </div>
-            <div className="h-1/6 w-full">
-              <div
-                className="py-2 w-full h-full flex flex-col justify-end"
-                data-aos="fade-up"
-                data-aos-duration="800"
-                data-aos-delay="2400"
-              >
-                <input
-                  type="submit"
-                  onClick={() => console.log(errors)}
-                  className="w-3/5 h-2/3 cursor-pointer bg-gradient-to-r from-blue-300 to-emerald-300 flex justify-center items-center rounded-sm border rounded-sm border-gray-900 outline-none p-2 shadow-solid-2 hover:shadow-solid-4  transition duration-200 ease-in-out text-sm font-bold"
-                ></input>
-              </div>
-            </div>
-          </form>
-        </div>
+    <div className="w-screen h-screen flex flex-col bg-slate-100 relative">
+      <div className="absolute top-0 w-screen bg-slate-200 h-2 flex">
+        <AnimatedProgressBar
+          animationDuration={ANIMATION_DURATION}
+          widthStart={((page - 2) / 2) * 100}
+          widthEnd={((page - 1) / 2) * 100}
+        />
       </div>
-      <div
-        className={`w-60 inline bg-rose-400 absolute right-10 bottom-10 transition duration-500 ease-in-out shadow-solid-10 p-4 flex flex-col ${
-          Object.keys(errors).length == 0 ? "opacity-0" : "opacity-100"
-        }`}
-      >
-        <span className="text-2xl font-bold">Error</span>
+      {page === 3 && (
+        <InputPage
+          onClick={async () => onSubmit()}
+          pageBack={async () => changePage(2)}
+          setValueFromRoot={(value) => setPassword(value)}
+          initialValue={password}
+          reactHookFormBI={{
+            required: "This is required.",
+            minLength: {
+              value: 2,
+              message: "This input is too small.",
+            },
+            maxLength: {
+              value: 100,
+              message: "This input exceed maxLength.",
+            },
+          }}
+          type="password"
+          title={titles["password"]}
+          placeholder={"Password"}
+          label={"Password"}
+        />
+      )}
+      {page === 2 && (
+        <InputPage
+          onClick={async () => changePage(3)}
+          pageBack={async () => changePage(1)}
+          initialValue={email}
+          reactHookFormBI={{
+            required: "This is required.",
+            minLength: {
+              value: 2,
+              message: "This input is too small.",
+            },
+            maxLength: {
+              value: 100,
+              message: "This input exceed maxLength.",
+            },
+            pattern: {
+              value: /^\S+@\S+$/i,
+              message: "Email is not valid",
+            },
+          }}
+          setValueFromRoot={(value) => setEmail(value)}
+          title={titles["email"]}
+          placeholder={"Email"}
+          label={"Email"}
+        />
+      )}
 
-        <ErrorMessage
-          errors={errors}
-          name="email"
-          render={({ messages }) =>
-            messages &&
-            Object.entries(messages).map(([type, message]) => (
-              <p key={type}>
-                <b>Email</b>: {message}
-              </p>
-            ))
+      {page === 1 && (
+        <LandingPage
+          onClick={async () => changePage(2)}
+          title={titles["landingPage"]}
+          content={
+            <>
+            <span className="text-sm">Don't have an account? <Link href="/signup"><span className="text-blue-500 cursor-pointer">Signup</span></Link></span>
+            </>
           }
         />
-        <ErrorMessage
-          errors={errors}
-          name="password"
-          render={({ messages }) =>
-            messages &&
-            Object.entries(messages).map(([type, message]) => (
-              <p key={type}>
-                <b>Password</b>: {message}
-              </p>
-            ))
-          }
-        />
-      </div>
+      )}
     </div>
   );
+};
+
+const TitlePage = ({ children }: { children: React.ReactNode }) => {
+  return <span className="xl:text-5xl 2xl:text-7xl font-bold">{children}</span>;
 };
 
 export default Login;

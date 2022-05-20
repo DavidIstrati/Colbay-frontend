@@ -18,7 +18,11 @@ interface CustomGridLayout {
   children?: JSX.Element[] | JSX.Element | undefined;
 }
 
-export const CustomGridLayout = ({ layout, width, children }: CustomGridLayout) => {
+export const CustomGridLayout = ({
+  layout,
+  width,
+  children,
+}: CustomGridLayout) => {
   const xMargin = width ? (width - 1144) / 3 : 40;
   return width ? (
     <GridLayout
@@ -41,33 +45,46 @@ export const CustomGridLayout = ({ layout, width, children }: CustomGridLayout) 
 interface IntegrationGridLayout {
   layout: layoutItem[];
   isLoading: boolean;
+  isError?: boolean;
   children?: JSX.Element[] | JSX.Element | undefined;
 }
 
 export const IntegrationGridLayout = ({
   layout,
   isLoading,
+  isError,
   children,
 }: IntegrationGridLayout) => {
   return (
-    <SizeMe>
-      {({ size }) => (
-        <>
-          {isLoading ? (
-            <CustomGridLayout layout={cardsLayout} width={size.width}>
-              {cardsLayout.map(({ i }) => (
-                <div key={i} className="w-full h-full">
-                  <LoadingCard />
-                </div>
-              ))}
-            </CustomGridLayout>
-          ) : (
-            <CustomGridLayout layout={layout} width={size.width}>
-              {children}
-            </CustomGridLayout>
-          )}
-        </>
-      )}
-    </SizeMe>
+    <div className="w-full inline-flex flex-row lg:px-10 xl:px-20 2xl:px-60">
+      <SizeMe>
+        {({ size }) => (
+          <>
+            {isLoading && (
+              <CustomGridLayout layout={cardsLayout} width={size.width}>
+                {cardsLayout.map(({ i }, index: number) => (
+                  <div key={i} className="w-full h-full">
+                    <LoadingCard index={index} />
+                  </div>
+                ))}
+              </CustomGridLayout>
+            )}
+            {isError && (
+              <div className="w-full h-full flex flex-col justify-center items-center">
+                <img src="ThinkingFace.png" className="w-80 h-80" />
+                <span className="text-xl text-slate-400 mt-5">
+                  Hmm... There's nothing here
+                </span>
+              </div>
+            )}
+            {!isLoading && !isError && (
+              <CustomGridLayout layout={layout} width={size.width}>
+                {children}
+              </CustomGridLayout>
+            )}
+          </>
+        )}
+      </SizeMe>
+    </div>
   );
 };

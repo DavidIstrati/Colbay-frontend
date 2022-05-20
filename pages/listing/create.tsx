@@ -35,7 +35,7 @@ const CreateLisitng: NextPage = () => {
   return (
     <div className="w-screen flex justify-center items-center -z-40 absolute font-spaceGrotesk bg-slate-100">
       <div className="w-full min-h-screen flex flex-col">
-        <Navbar active="listings" />
+        <Navbar active="listings" user={user}/>
         <div className="w-screen h-screen flex lg:px-10 xl:px-20 2xl:px-60 py-10">
           <div className="w-full h-full bg-white shadow flex p-10">
             <div className="w-full h-full flex flex-row">
@@ -82,7 +82,7 @@ const CreateLisitng: NextPage = () => {
                 <span className="text-xl fotn-bold">Preview</span>
                 <div className="mt-10">
                   <PreviewCard
-                    id={"preview"}
+                    listingId={"preview"}
                     image={image}
                     title={title}
                     price={price}
