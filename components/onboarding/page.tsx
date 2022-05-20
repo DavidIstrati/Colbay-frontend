@@ -26,12 +26,12 @@ const getProps = (
     delay: active ? 0 : delay,
     config: { duration: animationDuration, easing: easings.easeInOutBack },
   });
-  props = {
+  let newProps = {
     ...props,
     display: props.opacity.to((displ) => (displ === 0 ? "none" : "initial")),
   };
 
-  return props;
+  return newProps;
 };
 
 interface AnimatedContainer {

@@ -30,7 +30,7 @@ const ListingPage: NextPage = () => {
   const { isLoading, isError, data } = useQuery(
     `listing_${listingId}`,
     async () =>
-      await getListing(listingId)
+      await getListing(listingId as string)
         .then((res) => {
           return res.data;
         })

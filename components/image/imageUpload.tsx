@@ -198,7 +198,7 @@ export function useDebounceEffect(
 ) {
   useEffect(() => {
     const t = setTimeout(() => {
-      fn.apply(undefined, deps);
+      fn.apply(undefined, deps as []);
     }, waitTime);
 
     return () => {
@@ -275,7 +275,7 @@ let previewUrl = "";
 
 function toBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve) => {
-    canvas.toBlob(resolve);
+    canvas.toBlob(resolve as BlobCallback);
   });
 }
 
