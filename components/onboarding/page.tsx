@@ -9,31 +9,6 @@ export const ANIMATION_DURATION: number = 550;
 export const INITIAL_PAGE_DELAY: number = 200;
 export const DELAY_BETWEEN_PAGES: number = 100;
 
-const getProps = (
-  active: boolean,
-  animationDuration: number,
-  delay: number
-) => {
-  let props = useSpring({
-    to: {
-      opacity: active ? 0 : 1,
-      transform: active ? `translate(0px, -100px)` : `translate(0px, 0px)`,
-    },
-    from: {
-      opacity: active ? 1 : 0,
-      transform: active ? `translate(0px, 0px)` : `translate(0px, 100px)`,
-    },
-    delay: active ? 0 : delay,
-    config: { duration: animationDuration, easing: easings.easeInOutBack },
-  });
-  let newProps = {
-    ...props,
-    display: props.opacity.to((displ) => (displ === 0 ? "none" : "initial")),
-  };
-
-  return newProps;
-};
-
 interface AnimatedContainer {
   active: boolean;
   animationDuration: number;
@@ -118,9 +93,25 @@ const AnimatedContainer = ({
   delay,
   children,
 }: AnimatedContainer) => {
+  const props = useSpring({
+    to: {
+      opacity: active ? 0 : 1,
+      transform: active ? `translate(0px, -100px)` : `translate(0px, 0px)`,
+    },
+    from: {
+      opacity: active ? 1 : 0,
+      transform: active ? `translate(0px, 0px)` : `translate(0px, 100px)`,
+    },
+    delay: active ? 0 : delay,
+    config: { duration: animationDuration, easing: easings.easeInOutBack },
+  });
+  const newProps = {
+    ...props,
+    display: props.opacity.to((displ) => (displ === 0 ? "none" : "initial")),
+  };
   return (
     <animated.div
-      style={getProps(active, animationDuration, delay)}
+      style={newProps}
       className="w-full h-full"
     >
       {children}
