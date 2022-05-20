@@ -135,7 +135,12 @@ const Login: NextPage = () => {
           title={titles["landingPage"]}
           content={
             <>
-            <span className="text-sm">Don't have an account? <Link href="/signup"><span className="text-blue-500 cursor-pointer">Signup</span></Link></span>
+              <span className="text-sm">
+                {"Don't have an account? "}
+                <Link href="/signup">
+                  <span className="text-blue-500 cursor-pointer">Signup</span>
+                </Link>
+              </span>
             </>
           }
         />

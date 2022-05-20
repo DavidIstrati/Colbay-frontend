@@ -37,7 +37,7 @@ const Signup: NextPage = () => {
     landingPage: (
       <>
         <TitlePage>
-          <span>Let's create</span>
+          <span>{"Let's create"}</span>
         </TitlePage>
         <TitlePage>
           <span>an account!</span>
@@ -77,7 +77,7 @@ const Signup: NextPage = () => {
     password: (
       <>
         <TitlePage>
-          <span>Let's choose a</span>
+          <span>{"Let's choose a"}</span>
         </TitlePage>
         <TitlePage>
           <span>Password</span>
@@ -242,7 +242,12 @@ const Signup: NextPage = () => {
           title={titles["landingPage"]}
           content={
             <>
-            <span className="text-sm">Already have an account? <Link href="/login"><span className="text-blue-500 cursor-pointer">Login</span></Link></span>
+              <span className="text-sm">
+                Already have an account?{" "}
+                <Link href="/login">
+                  <span className="text-blue-500 cursor-pointer">Login</span>
+                </Link>
+              </span>
             </>
           }
         />

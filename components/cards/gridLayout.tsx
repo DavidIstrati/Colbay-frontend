@@ -87,7 +87,7 @@ export const IntegrationGridLayout = ({
               <div className="w-full h-full flex flex-col justify-center items-center">
                 <img src="ThinkingFace.png" className="w-80 h-80" />
                 <span className="text-xl text-slate-400 mt-5">
-                  Hmm... There's nothing here
+                  {"Hmm... There's nothing here"}
                 </span>
               </div>
             )}

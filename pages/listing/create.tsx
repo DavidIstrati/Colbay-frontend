@@ -26,7 +26,7 @@ const CreateLisitng: NextPage = () => {
   const [title, setTitle] = useState(defaultTitle);
   const [description, setDesctiption] = useState(defaultDescription);
   const [price, setPrice] = useState(defaultPrice);
-  const [image, setImage] = useState("")
+  const [image, setImage] = useState("");
 
   const onSubmit = (data: ListingInputs) => {
     setPage("main image");
@@ -35,7 +35,7 @@ const CreateLisitng: NextPage = () => {
   return (
     <div className="w-screen flex justify-center items-center -z-40 absolute font-spaceGrotesk bg-slate-100">
       <div className="w-full min-h-screen flex flex-col">
-        <Navbar active="listings" user={user}/>
+        <Navbar active="listings" user={user} />
         <div className="w-screen h-screen flex lg:px-10 xl:px-20 2xl:px-60 py-10">
           <div className="w-full h-full bg-white shadow flex p-10">
             <div className="w-full h-full flex flex-row">
@@ -47,6 +47,7 @@ const CreateLisitng: NextPage = () => {
                   {["Details", "Main Image", "Other Images"].map(
                     (pageTitle, index) => (
                       <div
+                        key={index}
                         className={`px-10 py-2 ${
                           pageTitle.toLocaleLowerCase() === page
                             ? "bg-gradient text-white rounded-md cursor-pointer"
@@ -74,7 +75,7 @@ const CreateLisitng: NextPage = () => {
                 )}
                 {page === "main image" && (
                   <div className="mt-10 h-full overflow-scroll">
-                    <ImageUpload setImageFromRoot={setImage}/>
+                    <ImageUpload setImageFromRoot={setImage} />
                   </div>
                 )}
               </div>

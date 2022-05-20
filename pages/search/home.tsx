@@ -105,15 +105,21 @@ const Home: NextPage = () => {
                 color: "bg-pink-100",
                 category: "all",
               },
-            ].map(({ imgPath, title, description, color, category }) => (
-              <CategoryItem
-                imgPath={imgPath}
-                title={title}
-                description={description}
-                color={color}
-                category={category}
-              />
-            ))}
+            ].map(
+              (
+                { imgPath, title, description, color, category },
+                index: number
+              ) => (
+                <CategoryItem
+                  key={index}
+                  imgPath={imgPath}
+                  title={title}
+                  description={description}
+                  color={color}
+                  category={category}
+                />
+              )
+            )}
           </div>
         </div>
       </div>
