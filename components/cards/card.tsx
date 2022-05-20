@@ -18,7 +18,7 @@ const CARDS_DELAY: number = 100;
 const ANIMATION_DURATION: number = 500;
 
 const getProps = (index: number) => {
-  return useSpring({
+  return {
     to: {
       opacity: 1,
       transform: `translate(0px, 0px)`,
@@ -29,7 +29,7 @@ const getProps = (index: number) => {
     },
     delay: INITIAL_DELAY + index * CARDS_DELAY,
     config: { duration: ANIMATION_DURATION, easing: easings.easeInOutBack },
-  });
+  };
 };
 
 export interface CardProps {
@@ -61,7 +61,7 @@ export const Card = ({
   const [like, setLike] = useState(isLiked);
 
   return (
-    <animated.div style={getProps(index)} className="w-full h-full">
+    <animated.div style={useSpring(getProps(index))} className="w-full h-full">
       <div
         key={listingId}
         className="w-full h-full rounded-lg relative overflow-hidden transition duration-500 ease-in-out hover:scale-105"
@@ -74,7 +74,9 @@ export const Card = ({
               <SuspenseImage
                 alt={description}
                 imageSrc={`${image}`}
-                className={`w-full h-full rounded-md transition duration-200 ease-in-out ${hover ? "shadow-md" : "shadow"}`}
+                className={`w-full h-full rounded-md transition duration-200 ease-in-out ${
+                  hover ? "shadow-md" : "shadow"
+                }`}
               />
             )}
           </Suspense>
@@ -129,7 +131,7 @@ export const PreviewCard = (props: CardProps) => {
 
 export const LoadingCard = ({ index = 0 }: { index?: number }) => {
   return (
-    <animated.div style={getProps(index)} className="w-full h-full">
+    <animated.div style={useSpring(getProps(index))} className="w-full h-full">
       <div className="w-full h-full rounded-lg relative">
         <div className="h-3/5 w-full flex justify-center">
           <div className="bg-slate-200 animate-pulse w-full h-full rounded-t-md" />
