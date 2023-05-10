@@ -4,20 +4,26 @@ import "/node_modules/react-resizable/css/styles.css";
 import "aos/dist/aos.css";
 import type { AppProps } from "next/app";
 
-import { AuthProvider } from "../helpers";
+import { AuthProvider, NextPageWithLayout } from "../helpers";
 
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Layout } from "../components";
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps }: AppProps) {
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const layout = Component.Layout ?? undefined
   return (
     <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <div className="font-spaceGrotesk">
+      <Layout layout={layout}>
+        <QueryClientProvider client={queryClient}>
           <Component {...pageProps} />
-        </div>
-      </QueryClientProvider>
+        </QueryClientProvider>
+      </Layout>
     </AuthProvider>
   );
 }

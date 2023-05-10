@@ -1,16 +1,16 @@
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 
-import { PageSearch } from "../../components";
+import { Footer, PageSearch } from "../../components";
 
 import Router from "next/router";
 
 import { Navbar } from "../../components";
 
-import { onPageLoad, useAuth } from "../../helpers";
+import { NextPageWithLayout, onPageLoad, useAuth } from "../../helpers";
 import Link from "next/link";
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   const { user, login, logout } = useAuth();
 
   useEffect(() => {
@@ -18,9 +18,7 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <div className="w-screen h-screen  flex justify-center items-center -z-40 absolute font-spaceGrotesk bg-slate-100">
-      <div className="w-full h-full flex flex-col">
-        <Navbar active="home" user={user} />
+      <div className="w-screen h-screen flex flex-col">
         <div className="w-full h-full flex flex-col justify-center items-center px-40">
           <div
             className="h-20 inline"
@@ -123,7 +121,6 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
@@ -158,5 +155,7 @@ const CategoryItem = ({
     </Link>
   );
 };
+
+Home.Layout = "home";
 
 export default Home;

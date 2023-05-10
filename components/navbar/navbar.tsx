@@ -1,26 +1,21 @@
 import {
   AiOutlineHome,
   AiOutlineHeart,
-  AiOutlineLogin,
-  AiOutlineLogout,
+  AiOutlineUser,
   AiOutlineTag,
 } from "react-icons/ai";
 import Link from "next/link";
 import { Router } from "next/router";
-import { useAuth, userProps } from "../../helpers/storage/context";
 
 export default function Navbar({
   active,
 }: {
   active: string;
-  user: userProps | null;
 }): JSX.Element {
-  const { user, logout } = useAuth();
-
   return (
-    <div className="w-screen h-20 bg-white py-4 lg:px-10 xl:px-20 2xl:px-60 shadow-md flex flex-row justify-between">
+    <header className="w-screen h-20 z-50 bg-white py-4 lg:px-10 xl:px-20 2xl:px-60 shadow-md flex flex-row justify-between">
       <div className="flex flex-row h-full">
-        <img src="/LogoText.svg" className="h-full" />
+        <Link href="/search"><img src="/LogoText.svg" className="h-full" /></Link>
         <div className="flex flex-row h-full ml-20">
           <NavTab
             icon={<AiOutlineHome />}
@@ -44,14 +39,13 @@ export default function Navbar({
       </div>
       <div className="flex flex-row h-full ml-20">
         <NavTab
-          icon={<AiOutlineLogout />}
-          text={"Logout"}
+          icon={<AiOutlineUser />}
+          text={"Account"}
           active={active}
-          link="/signup"
-          onClick={() => logout()}
+          link="/account"
         />
       </div>
-    </div>
+    </header>
   );
 }
 

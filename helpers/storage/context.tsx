@@ -1,25 +1,15 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 
-export type userProps = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    userId: string;
-    institution: string;
-    graduationYear: string;
-    verifiedEmail: boolean;
-}
-
 type authContextType = {
-  user: userProps | null;
-  login: (user: userProps) => void;
+  user: string | null;
+  login: (user: string) => void;
   logout: () => void;
 };
 
 const authContextDefaultValues: authContextType = {
   user: null,
-  login: (user: userProps) => {},
+  login: (user: string) => {},
   logout: () => {},
 };
 
@@ -34,9 +24,9 @@ type Props = {
 };
 
 export function AuthProvider({ children }: Props) {
-    const [user, setUser] = useLocalStorage<userProps|null>("user", null);
+    const [user, setUser] = useLocalStorage<string|null>("user", null);
 
-    const login = (user: userProps) => {
+    const login = (user: string) => {
         setUser(user);
     };
 

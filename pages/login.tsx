@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import Router from "next/router";
 import { useEffect, useState } from "react";
-import { getUser, postUser } from "../api";
+import { loginUser } from "../api";
 import {
   LandingPage,
   InputPage,
@@ -61,10 +61,9 @@ const Login: NextPage = () => {
     password: string;
   }
 
-  const onSubmit = () => {
-    console.log(password);
-    getUser(undefined, email, password).then((resp) => {
-      login(resp.data);
+  const onSubmit = async () => {
+    await loginUser(email, password).then((resp) => {
+      login(resp.data.access_token);
       Router.push("/search");
       console.log(resp);
     });
@@ -154,3 +153,4 @@ const TitlePage = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default Login;
+

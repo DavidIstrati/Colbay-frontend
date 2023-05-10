@@ -1,11 +1,10 @@
 import AOS from "aos";
 import Router from "next/router";
-import { userProps } from "./storage/context";
 
 const onPageLoad = (
   initAos: boolean,
   userRestricted: boolean,
-  user?: userProps | null
+  user?: string | null
 ) => {
   if (initAos) {
     AOS.init();

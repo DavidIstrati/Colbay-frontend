@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import Router from "next/router";
 import { useEffect, useState } from "react";
-import { postUser } from "../api";
+import { postUser, postVerificationCode } from "../api";
 import {
   LandingPage,
   InputPage,
@@ -29,6 +29,7 @@ const Signup: NextPage = () => {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [graduationYear, setGradYear] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -64,6 +65,16 @@ const Signup: NextPage = () => {
         </TitlePage>
       </>
     ),
+    gradYear: (
+      <>
+        <TitlePage>
+          <span>When will you</span>
+        </TitlePage>
+        <TitlePage>
+          <span>Graduate?</span>
+        </TitlePage>
+      </>
+    ),
     email: (
       <>
         <TitlePage>
@@ -94,26 +105,29 @@ const Signup: NextPage = () => {
         </TitlePage>
       </>
     ),
+    verificationCode: (
+      <>
+        <TitlePage>
+          <span>We sent you a</span>
+        </TitlePage>
+        <TitlePage>
+          <span>Verification Code!</span>
+        </TitlePage>
+      </>
+    ),
   };
-
-  const onSubmit = () => {
-    postUser({
+ 
+  const onSubmit = async () => {
+    await postUser({
       firstName,
       lastName,
+      graduationYear,
       email,
       password,
     })
       .then((resp: any) => {
-        login({
-          firstName: resp.data.firstName,
-          lastName: resp.data.lastName,
-          email: resp.data.email,
-          userId: resp.data.userId,
-          institution: resp.data.institution,
-          graduationYear: resp.data.graduationYear,
-          verifiedEmail: resp.data.verifiedEmail,
-        });
-        Router.push("/search");
+        login(resp.data.access_token);
+        Router.push("verifyEmail")
       })
       .catch((e) => alert(e));
   };
@@ -123,14 +137,18 @@ const Signup: NextPage = () => {
       <div className="absolute top-0 w-screen bg-slate-200 h-2 flex">
         <AnimatedProgressBar
           animationDuration={ANIMATION_DURATION}
-          widthStart={((page - 2) / 6) * 100}
-          widthEnd={((page - 1) / 6) * 100}
+          widthStart={((page - 2) / 7) * 100}
+          widthEnd={((page - 1) / 7) * 100}
         />
       </div>
-      {page === 6 && (
+      {page === 7 && (
         <InputPage
-          onClick={async () => onSubmit()}
-          pageBack={async () => changePage(5)}
+          onClick={async () => {
+            changePage(8);
+            await onSubmit();
+
+          }}
+          pageBack={async () => changePage(6)}
           setValueFromRoot={(value) => setConfirmPassword(value)}
           initialValue={confirmPassword}
           reactHookFormBI={{
@@ -143,10 +161,10 @@ const Signup: NextPage = () => {
           label={"Confirm Password"}
         />
       )}
-      {page === 5 && (
+      {page === 6 && (
         <InputPage
-          onClick={async () => changePage(6)}
-          pageBack={async () => changePage(4)}
+          onClick={async () => changePage(7)}
+          pageBack={async () => changePage(5)}
           setValueFromRoot={(value) => setPassword(value)}
           initialValue={password}
           reactHookFormBI={{
@@ -166,10 +184,10 @@ const Signup: NextPage = () => {
           label={"Password"}
         />
       )}
-      {page === 4 && (
+      {page === 5 && (
         <InputPage
-          onClick={async () => changePage(5)}
-          pageBack={async () => changePage(3)}
+          onClick={async () => changePage(6)}
+          pageBack={async () => changePage(4)}
           initialValue={email}
           reactHookFormBI={{
             required: "This is required.",
@@ -190,6 +208,39 @@ const Signup: NextPage = () => {
           title={titles["email"]}
           placeholder={"Email"}
           label={"Email"}
+        />
+      )}
+      {page === 4 && (
+        <InputPage
+          onClick={async () => changePage(5)}
+          pageBack={async () => changePage(3)}
+          initialValue={graduationYear}
+          reactHookFormBI={{
+            required: "This is required.",
+            minLength: {
+              value: 2,
+              message: "This input is too small.",
+            },
+            maxLength: {
+              value: 100,
+              message: "This input exceed maxLength.",
+            },
+          }}
+          selectOptions={[
+            "2020",
+            "2021",
+            "2022",
+            "2023",
+            "2024",
+            "2025",
+            "2026",
+            "2027",
+          ].map((year) => Object({ value: year, text: year }))}
+          setValueFromRoot={(value) => setGradYear(value)}
+          title={titles["gradYear"]}
+          placeholder={"Expected Graduation Year"}
+          label={"Expected Graduation Year"}
+          type={"select"}
         />
       )}
       {page === 3 && (

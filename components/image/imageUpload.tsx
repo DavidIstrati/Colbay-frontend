@@ -83,21 +83,21 @@ export default function ImageUpload({
   );
 
   return (
-    <div className="w-full h-full">
-      <div className="Crop-Controls">
-        <div className="flex">
-          <div className="mb-3 w-96">
-            <label
-              htmlFor="formFile"
-              className="form-label inline-block mb-2 text-gray-700"
-            >
-              Please select an image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={onSelectFile}
-              className="
+    <div className="w-full max-h-full flex flex-col overflow-scroll relative">
+      <div className="w-full h-1/5 z-10 py-5 bg-white/80 backdrop-blur-lg flex flex-col">
+        <div className="inline-flex flex-col">
+          <label
+            htmlFor="formFile"
+            className="form-label inline-block mb-2 text-gray-700"
+          >
+            Please select an image
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={onSelectFile}
+            className="
+            w-80 mb-3
               appearance-none
               text-gray-700
               bg-white bg-clip-padding
@@ -107,8 +107,7 @@ export default function ImageUpload({
               ease-in-out
               m-0
               focus:text-slate-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-            />
-          </div>
+          />
         </div>
         <div className="flex flex-row">
           <div className="inline-flex flex-row border border-gray-300 mr-5">
@@ -148,36 +147,32 @@ export default function ImageUpload({
           </div>
         </div>
       </div>
-      <div className="w-full h-full flex flex-row bg-slate-100 mt-10">
-        <div className="w-full h-full p-10 rounded-lg flex flex-col">
-          {Boolean(imgSrc) && (
-            <span className="text-xl font-bold">Your Image</span>
-          )}
-          {Boolean(imgSrc) && (
-            <ReactCrop
-              crop={crop}
-              onChange={(_, percentCrop) => setCrop(percentCrop)}
-              onComplete={(c) => setCompletedCrop(c)}
-              aspect={aspect}
-            >
-              <img
-                ref={imgRef}
-                alt="Crop me"
-                src={imgSrc}
-                className="max-w-full
+      <div className="w-96 max-h-full p-5 flex flex-row bg-slate-100 relative">
+        {Boolean(imgSrc) && (
+          <ReactCrop
+            crop={crop}
+            onChange={(_, percentCrop) => setCrop(percentCrop)}
+            onComplete={(c) => setCompletedCrop(c)}
+            aspect={aspect}
+            className="rounded-lg"
+          >
+            <img
+              ref={imgRef}
+              alt="Crop me"
+              src={imgSrc}
+              className="
                 rounded-lg  border border-slate-200 shadow-md"
-                style={{ transform: `scale(${scale}) rotate(${rotate}deg)` }}
-                onLoad={onImageLoad}
-              />
-            </ReactCrop>
-          )}
-        </div>
+              style={{ transform: `scale(${scale}) rotate(${rotate}deg)` }}
+              onLoad={onImageLoad}
+            />
+          </ReactCrop>
+        )}
       </div>
       <div>
         {Boolean(completedCrop) && (
           <canvas
             ref={previewCanvasRef}
-            className="hidden"
+            className="hidden absolute"
             style={{
               border: "1px solid black",
               objectFit: "contain",

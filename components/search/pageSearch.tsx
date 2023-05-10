@@ -1,12 +1,8 @@
-import { Router } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  AiOutlineArrowRight,
-  AiOutlineHeart,
   AiOutlineSearch,
 } from "react-icons/ai";
-import { postLike } from "../../api";
 
 interface pageSearch {
   initialSearch: string;

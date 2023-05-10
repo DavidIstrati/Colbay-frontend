@@ -33,6 +33,11 @@ export default function ListingForm({
     formState: { errors },
   } = useForm<ListingInputs>({
     criteriaMode: "all",
+    defaultValues: {
+      title: defaultTitle,
+      price: defaultPrice,
+      description: defaultDescription
+    }
   });
 
   return (
@@ -83,7 +88,7 @@ export default function ListingForm({
               message: "This input is too small.",
             },
             maxLength: {
-              value: 300,
+              value: 1000,
               message: "This input exceed maxLength.",
             },
           })}

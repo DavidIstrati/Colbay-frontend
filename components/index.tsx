@@ -1,4 +1,5 @@
-import { TextInput } from "./input";
+import { TextInput, SimpleTextInput } from "./input";
+import type { selectOptions } from "./input";
 import { CustomLink } from "./links";
 import { Navbar } from "./navbar";
 import {
@@ -16,10 +17,15 @@ import { PulseFill } from "./loading";
 import {
   LandingPage,
   InputPage,
+  SingleImagePage,
+  MultipleImagePage,
   AnimatedProgressBar,
   ANIMATION_DURATION,
   INITIAL_PAGE_DELAY,
 } from "./onboarding";
+import { Footer } from "./footer";
+import { Layout } from "./layout";
+import { FirstPagePagination, GeneralPagePagination, LastPagePagination } from "./pagination";
 export {
   TextInput,
   CustomLink,
@@ -36,8 +42,16 @@ export {
   IntegrationGridLayout,
   LandingPage,
   InputPage,
+  SingleImagePage,
+  MultipleImagePage,
   AnimatedProgressBar,
   ANIMATION_DURATION,
   INITIAL_PAGE_DELAY,
+  Footer,
+  Layout,
+  FirstPagePagination,
+  GeneralPagePagination,
+  LastPagePagination,
+  SimpleTextInput
 };
-export type { ListingInputs, CardProps };
+export type { ListingInputs, CardProps, selectOptions };

@@ -2,8 +2,9 @@ import { useSpring, animated, easings } from "react-spring";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import NextButton from "./button";
-import { OnboardingTextInput } from "../input";
+import { OnboardingTextInput, SingleImageInput, selectOptions } from "../input";
 import { AiOutlineArrowLeft, AiOutlineEnter } from "react-icons/ai";
+import { MultipleImageInput } from "../input/imageInput";
 
 export const ANIMATION_DURATION: number = 550;
 export const INITIAL_PAGE_DELAY: number = 200;
@@ -110,10 +111,7 @@ const AnimatedContainer = ({
     display: props.opacity.to((displ) => (displ === 0 ? "none" : "initial")),
   };
   return (
-    <animated.div
-      style={newProps}
-      className="w-full h-full"
-    >
+    <animated.div style={newProps} className="w-full h-full">
       {children}
     </animated.div>
   );
@@ -183,10 +181,11 @@ interface InputPageProps extends PageProps {
   placeholder: string;
   label: string;
   title: JSX.Element | JSX.Element[];
-  pageBack: () => void;
+  pageBack?: () => void;
   setValueFromRoot: (value: string) => void;
   initialValue: string;
   reactHookFormBI: any;
+  selectOptions?: selectOptions[];
   type?: string;
 }
 
@@ -199,6 +198,7 @@ export const InputPage = ({
   label,
   title,
   reactHookFormBI,
+  selectOptions,
   type = "text",
 }: InputPageProps) => {
   const [clicked, setClicked] = useState<boolean>(false);
@@ -238,20 +238,23 @@ export const InputPage = ({
               setValue("value", value, { shouldValidate: false });
               handleSubmit((data) => onSubmit(data))();
             }}
+            selectOptions={selectOptions}
             type={type}
           ></OnboardingTextInput>
         </div>
         <div className="flex flex-row mt-10 items-stretch">
-          <span
-            className="mr-5 px-10 py-2 select-none bg-black text-white text-xl rounded-lg flex justify-center items-center transtition duration-500 ease-in-out hover:shadow-lg cursor-pointer"
-            onClick={() => {
-              pageBack();
-              setClicked(true);
-            }}
-          >
-            <AiOutlineArrowLeft />
-            <span>Back</span>
-          </span>
+          {pageBack && (
+            <span
+              className="mr-5 px-10 py-2 select-none bg-black text-white text-xl rounded-lg flex justify-center items-center transtition duration-500 ease-in-out hover:shadow-lg cursor-pointer"
+              onClick={() => {
+                pageBack();
+                setClicked(true);
+              }}
+            >
+              <AiOutlineArrowLeft />
+              <span>Back</span>
+            </span>
+          )}
           <NextButton onClick={handleSubmit((data) => onSubmit(data))} />
           <span className="ml-5 select-none	 text-sm font-medium text-slate-400 flex flex-row justify-center items-center">
             <span>
@@ -259,6 +262,91 @@ export const InputPage = ({
             </span>{" "}
             <AiOutlineEnter />
           </span>
+        </div>
+      </div>
+    </Page>
+  );
+};
+
+interface SingleImagePageProps extends PageProps {
+  title: JSX.Element | JSX.Element[];
+  pageBack: () => void;
+  setValueFromRoot: (value: string) => void;
+  onSubmitToRoot: (value: Blob) => void;
+}
+
+export const SingleImagePage = ({
+  onClick,
+  pageBack,
+  setValueFromRoot,
+  onSubmitToRoot,
+  title,
+}: SingleImagePageProps) => {
+  const [clicked, setClicked] = useState<boolean>(false);
+
+  const onSubmit = (imgBlob: Blob) => {
+    onSubmitToRoot(imgBlob);
+    setClicked(true);
+    onClick();
+  };
+
+  return (
+    <Page clicked={clicked} delay={DELAY_BETWEEN_PAGES}>
+      <div className="w-1/2 2xl:w-1/3 h-full flex flex-col justify-center items-start">
+        <div className="flex flex-col">{title}</div>
+        <div className="mt-10">
+          <SingleImageInput
+            placeholder={"Image"}
+            label={"Image"}
+            initialValue={""}
+            onBack={() => {
+              pageBack();
+              setClicked(true);
+            }}
+            onSubmit={onSubmit}
+            setValueFromRoot={setValueFromRoot}
+          />
+        </div>
+      </div>
+    </Page>
+  );
+};
+
+interface MultipleImagePageProps extends PageProps {
+  title: JSX.Element | JSX.Element[];
+  pageBack: () => void;
+  onSubmitToRoot: (value: Blob) => void;
+}
+
+export const MultipleImagePage = ({
+  onClick,
+  pageBack,
+  onSubmitToRoot,
+  title,
+}: MultipleImagePageProps) => {
+  const [clicked, setClicked] = useState<boolean>(false);
+
+  const onSubmit = () => {
+    setClicked(true);
+    onClick();
+  };
+
+  return (
+    <Page clicked={clicked} delay={DELAY_BETWEEN_PAGES}>
+      <div className="w-1/2 2xl:w-1/3 h-full flex flex-col justify-center items-start">
+        <div className="flex flex-col">{title}</div>
+        <div className="mt-10">
+          <MultipleImageInput
+            placeholder={"Image"}
+            label={"Image"}
+            initialValue={""}
+            onBack={() => {
+              pageBack();
+              setClicked(true);
+            }}
+            onUpload={(value: Blob) => onSubmitToRoot(value)}
+            onSubmit={onSubmit}
+          />
         </div>
       </div>
     </Page>

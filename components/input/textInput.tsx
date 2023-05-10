@@ -60,9 +60,15 @@ const TextInput = ({
   );
 };
 
+export interface selectOptions {
+  value: string;
+  text: string;
+}
+
 interface OnboardingTextInput extends textInput {
   errors: string | undefined;
   initialValue: string;
+  selectOptions?: selectOptions[];
   onEnter: (data: string) => void;
 }
 
@@ -72,6 +78,7 @@ const OnboardingTextInput = ({
   initialValue,
   label,
   type,
+  selectOptions,
   setValueFromRoot,
   onEnter,
   errors,
@@ -79,11 +86,11 @@ const OnboardingTextInput = ({
   const [value, setValue] = useState(initialValue);
   const handleKeyDown = (event: any) => {
     if (event.key === "Enter" && event.shiftKey == false) {
-      const data = event.target.value
+      const data = event.target.value;
       onEnter(data);
     }
   };
-  
+
   return (
     <div className="flex flex-col">
       <span
@@ -94,20 +101,40 @@ const OnboardingTextInput = ({
         {errors ? errors : label}
       </span>
 
-      <input
-        className={`inline bg-slate-100  border rounded-lg shadow-md hover:shadow-lg ${
-          errors ? "border-red-500 shadow-red-500/20" : "border-slate-400"
-        } outline-none px-5 py-3 shadow-solid-2 hover:shadow-solid-4  transition duration-500 ease-in-out placeholder-gray-900 placeholder-opacity-50 text-3xl`}
-        {...reactFormProps}
-        value={value}
-        onKeyDown={(event) => handleKeyDown(event)}
-        onChange={(e: any) => {
-          setValue(e.target.value);
-          setValueFromRoot && setValueFromRoot(e.target.value);
-        }}
-        placeholder={placeholder}
-        type={type}
-      ></input>
+      {type != "select" ? (
+        <input
+          className={`inline bg-slate-50  border rounded-lg shadow-md hover:shadow-lg ${
+            errors ? "border-red-500 shadow-red-500/20" : "border-slate-400"
+          } outline-none px-5 py-3 shadow-solid-2 hover:shadow-solid-4  transition duration-500 ease-in-out placeholder-gray-900 placeholder-opacity-50 text-3xl`}
+          {...reactFormProps}
+          value={value}
+          onKeyDown={(event) => handleKeyDown(event)}
+          onChange={(e: any) => {
+            setValue(e.target.value);
+            setValueFromRoot && setValueFromRoot(e.target.value);
+          }}
+          placeholder={placeholder}
+          type={type}
+        />
+      ) : (
+        <select
+          className={`inline bg-slate-50  border rounded-lg shadow-md hover:shadow-lg ${
+            errors ? "border-red-500 shadow-red-500/20" : "border-slate-400"
+          } outline-none px-5 py-3 shadow-solid-2 appearance-none hover:shadow-solid-4  transition duration-500 ease-in-out placeholder-gray-900 placeholder-opacity-50 text-3xl`}
+          {...reactFormProps}
+          value={value}
+          onKeyDown={(event) => handleKeyDown(event)}
+          onChange={(e: any) => {
+            setValue(e.target.value);
+            setValueFromRoot && setValueFromRoot(e.target.value);
+          }}
+        >
+          <option value=""></option>
+          {selectOptions && selectOptions.map(({value, text})=>(
+            <option value={value}>{text}</option>
+          ))}
+        </select>
+      )}
     </div>
   );
 };
